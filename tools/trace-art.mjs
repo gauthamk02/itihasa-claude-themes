@@ -5,12 +5,18 @@
 // The config (JSON) names:
 //   source      the image, relative to the config file
 //   id          art name; writes plugins/itihasa/hooks/scenes/art/<id>.js
+//   crop        optional "WxH+X+Y" in source pixels, applied before anything else
 //   height      trace height in px (smaller = fewer characters)
 //   mask        how to cut the subject from its background:
 //               { "channel": "chroma" | "dark", "threshold": percent }
 //               chroma: the subject is coloured and the background grey (bronze on grey)
 //               dark:   the subject is darker than the background (ink on paper)
+//               or { "fx": "<ImageMagick -fx rule, true on the subject>" }
+//               add "solid": true to keep only the largest piece and fill its holes
 //   tones       lighter layers inside the subject: [{ "name", "above": percent of gray }]
+//   parts       small layers outside the mask, each found by its own colour rule
+//               inside a region of the cropped source:
+//               [{ "name", "region": "WxH+X+Y", "fx": "<-fx rule>" }]
 //   turdsize, opttolerance, alphamax   potrace settings (fewer, smoother curves when larger)
 //   credit      one line for the module header (title, museum, licence)
 //
@@ -32,18 +38,39 @@ const run = (cmd, args) => execFileSync(cmd, args, { cwd: work, stdio: ['ignore'
 const H = cfg.height
 const big = Math.round(H * 1.4)
 
+// 0. The source, cropped if asked.
+let input = src
+if (cfg.crop) {
+  run('magick', [src, '-crop', cfg.crop, '+repage', 'source.png'])
+  input = 'source.png'
+}
+
 // 1. Gray and (for chroma masks) colourfulness, at a working size.
-run('magick', [src, '-resize', `x${big}`, '-colorspace', 'Gray', 'gray.png'])
-if (cfg.mask.channel === 'chroma') {
-  run('magick', [src, '-resize', `x${big}`, '-colorspace', 'HCL', '-channel', 'G', '-separate', '+channel', '-auto-level', 'key.png'])
+run('magick', [input, '-resize', `x${big}`, '-colorspace', 'Gray', 'gray.png'])
+if (cfg.mask.fx) {
+  run('magick', [input, '-resize', `x${big}`, '-fx', cfg.mask.fx, '-colorspace', 'Gray', 'key.png'])
+} else if (cfg.mask.channel === 'chroma') {
+  run('magick', [input, '-resize', `x${big}`, '-colorspace', 'HCL', '-channel', 'G', '-separate', '+channel', '-auto-level', 'key.png'])
 } else {
   run('magick', ['gray.png', '-negate', 'key.png'])
 }
 
-// 2. The subject's silhouette: white where the subject is.
+// 2. The subject's silhouette: white where the subject is. A "solid" mask
+// keeps only the largest piece and fills the holes inside it.
+const solid = cfg.mask.solid
+  ? [
+      '-define', `connected-components:area-threshold=${Math.round(big * big * 0.05)}`,
+      '-define', 'connected-components:mean-color=true', '-connected-components', '8',
+      '-negate',
+      '-define', `connected-components:area-threshold=${Math.round(big * big * 0.01)}`,
+      '-define', 'connected-components:mean-color=true', '-connected-components', '8',
+      '-negate',
+    ]
+  : []
 run('magick', [
-  'key.png', '-threshold', `${cfg.mask.threshold}%`,
+  'key.png', '-threshold', `${cfg.mask.fx ? 50 : cfg.mask.threshold}%`,
   '-morphology', 'Close', 'Disk:2', '-morphology', 'Open', 'Disk:1.5',
+  ...solid,
   '-resize', `x${H}`, '-threshold', '50%', 'base.png',
 ])
 
@@ -55,10 +82,25 @@ for (const tone of cfg.tones ?? []) {
   ])
 }
 
+// 3b. Parts: each found by its own colour rule inside its region, on a black
+// canvas the size of the source, then brought to the trace size.
+const full = run('magick', ['identify', '-format', '%w %h', input]).toString().trim().split(' ').map(Number)
+for (const part of cfg.parts ?? []) {
+  const [, w, h, x, y] = /^(\d+)x(\d+)\+(\d+)\+(\d+)$/.exec(part.region).map(Number)
+  run('magick', [
+    '-size', `${full[0]}x${full[1]}`, 'xc:black',
+    '(', input, '-crop', `${w}x${h}+${x}+${y}`, '+repage', '-fx', part.fx, '-colorspace', 'Gray',
+    '-morphology', 'Open', 'Disk:1', ')',
+    '-geometry', `+${x}+${y}`, '-composite',
+    '-resize', `x${H}`, '-threshold', '50%', `${part.name}.png`,
+  ])
+}
+
 // 4. Trace each layer, keeping potrace's own transform and path.
 const size = run('magick', ['identify', '-format', '%w %h', 'base.png']).toString().trim().split(' ').map(Number)
 const layers = {}
-for (const name of ['base', ...(cfg.tones ?? []).map(t => t.name)]) {
+const names = ['base', ...(cfg.tones ?? []).map(t => t.name), ...(cfg.parts ?? []).map(p => p.name)]
+for (const name of names) {
   run('magick', [`${name}.png`, '-negate', `${name}.pbm`])
   run('potrace', [
     `${name}.pbm`, '-s', '--flat',

@@ -2,8 +2,9 @@
 // /itihasa command needs. Each theme lives in scenes/<id>.js and exports THEME.
 
 import { THEME as nataraja } from './scenes/nataraja.js'
+import { THEME as adiyogi } from './scenes/adiyogi.js'
 
-export const THEMES = [nataraja]
+export const THEMES = [nataraja, adiyogi]
 
 export const DEFAULT_ID = 'nataraja'
 

@@ -10,6 +10,7 @@ each has a **still** version (the default) and a **motion** version you can swit
 | Theme | What it shows | Motion version |
 |---|---|---|
 | `nataraja` | Shiva as Nataraja, Lord of the Dance, inside the ring of fire: a Chola bronze in firelight, with a warm dark-bronze palette | Embers rise from the flame tips. The ring keeps a steady orange glow and the figure stays still. |
+| `adiyogi` | Shiva as Adiyogi, the first yogi: a dark stone bust with eyes closed and the crescent moon in his hair, rising under a night sky, with a deep indigo palette | The stars twinkle, all on one clock. The bust and its glow stay still. |
 
 More are on the way: Anantashayana, Indra and Vritra, Samudra Manthan, and Kurukshetra.
 
@@ -43,6 +44,7 @@ The theme turns on when a session starts, always **still**. It remembers the las
 |---|---|
 | `/itihasa` | List the themes and show which one is on |
 | `/itihasa nataraja` | Show Nataraja, still (`shiva` works too) |
+| `/itihasa adiyogi` | Show Adiyogi, still (`yogi` works too) |
 | `/itihasa motion` | Let the current theme move (`moving` works too) |
 | `/itihasa still` | Hold it still again |
 | `/itihasa nataraja motion` | Pick a theme and its mode in one go |
@@ -58,7 +60,7 @@ Motion also stops on its own when the system's **Reduce motion** setting is on.
 
 ## How the art is made
 
-The figures are traced from public-domain photographs and prints, not drawn freehand.
+The figures are traced from photographs and prints, not drawn freehand.
 [`tools/trace-art.mjs`](tools/trace-art.mjs) cuts the subject from its background, splits it into a few tone
 layers, and traces each layer with [potrace](https://potrace.sourceforge.net/). Each scene's settings live in
 `sources/<theme>/trace.json`, next to the source image. The scene module (`plugins/itihasa/hooks/scenes/`)
@@ -101,3 +103,5 @@ node tools/trace-art.mjs sources/nataraja/trace.json
   alloy. The Metropolitan Museum of Art, 1987.80.1, Gift of R. H. Ellsworth Ltd., in honor of Susan Dillon,
   1987. Image released under the Met's Open Access policy (CC0):
   <https://www.metmuseum.org/art/collection/search/39328>
+- **Adiyogi** is traced from a photograph of an Adiyogi bust supplied by the repo owner
+  (`sources/adiyogi/`). It is not a public-domain source: confirm the licence before publishing this theme.

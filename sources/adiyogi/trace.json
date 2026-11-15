@@ -1,0 +1,23 @@
+{
+  "id": "adiyogi",
+  "source": "fiber-frp-adiyogi-shiva-statue-sculpture.jpeg",
+  "credit": "Adiyogi Shiva bust, from a photograph supplied by the repo owner (fiber-frp-adiyogi-shiva-statue-sculpture.jpeg); not a public-domain source.",
+  "crop": "1024x830+0+318",
+  "height": 640,
+  "mask": {
+    "fx": "(r+g+b)/3<0.42 && (max(r,max(g,b))-min(r,min(g,b)))<0.14",
+    "solid": true
+  },
+  "tones": [
+    { "name": "mid", "above": 13 },
+    { "name": "high", "above": 20 }
+  ],
+  "parts": [
+    { "name": "moon", "region": "180x170+615+0", "fx": "b-r<0.04 && (r+g+b)/3>0.3" },
+    { "name": "tilak", "region": "50x70+490+90", "fx": "(r+g+b)/3>0.55" },
+    { "name": "earrings", "region": "380x90+320+330", "fx": "r-b>0.1 && r>0.15" }
+  ],
+  "turdsize": 16,
+  "alphamax": 1.15,
+  "opttolerance": 0.8
+}

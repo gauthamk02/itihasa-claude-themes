@@ -124,9 +124,11 @@ export function fill(w, h, inner) {
 /**
  * A subject pinned inside a box of the window and scaled to fit it.
  * x, y, width, height are window percentages ('52%'); align is an SVG
- * preserveAspectRatio alignment such as 'xMaxYMax'.
+ * preserveAspectRatio alignment such as 'xMaxYMax'. `spill` lets glows drawn
+ * around the subject reach past the box instead of being cut off at its edge.
  */
-export function pin({ x = '0', y = '0', width = '100%', height = '100%', w, h, align = 'xMidYMax', cls = '' }, inner) {
+export function pin({ x = '0', y = '0', width = '100%', height = '100%', w, h, align = 'xMidYMax', cls = '', spill = false }, inner) {
   const c = cls ? ` class="${cls}"` : ''
-  return `<svg${c} x="${x}" y="${y}" width="${width}" height="${height}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="${align} meet">${inner}</svg>`
+  const o = spill ? ' overflow="visible"' : ''
+  return `<svg${c} x="${x}" y="${y}" width="${width}" height="${height}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="${align} meet"${o}>${inner}</svg>`
 }
