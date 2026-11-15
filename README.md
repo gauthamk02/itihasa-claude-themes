@@ -7,11 +7,32 @@ color palette, a **still** version (the default) and an optional **motion** vers
 
 ## Themes
 
-| Theme | What it shows | In motion |
-|---|---|---|
-| `varanasi` | The ghats of Kashi at dusk, in gold line-work after Edward Lear's 1873 watercolour | Diyas flicker on the river |
-| `nataraja` | Shiva as Lord of the Dance in his ring of fire, traced from a Chola bronze | Embers rise from the flames |
-| `adiyogi` | Shiva as Adiyogi, the first yogi, under a night sky | The stars twinkle |
+<table>
+  <tr>
+    <td width="45%"><img src="docs/screenshots/varanasi.jpg" alt="Varanasi theme in the Claude desktop app"></td>
+    <td>
+      <b><code>varanasi</code></b><br>
+      The ghats of Kashi at dusk, in gold line-work after Edward Lear's 1873 watercolour.<br><br>
+      <i>In motion:</i> diyas flicker on the river.
+    </td>
+  </tr>
+  <tr>
+    <td width="45%"><img src="docs/screenshots/nataraja.jpg" alt="Nataraja theme in the Claude desktop app"></td>
+    <td>
+      <b><code>nataraja</code></b><br>
+      Shiva as Lord of the Dance in his ring of fire, traced from a Chola bronze.<br><br>
+      <i>In motion:</i> embers rise from the flames.
+    </td>
+  </tr>
+  <tr>
+    <td width="45%"><img src="docs/screenshots/adiyogi.jpg" alt="Adiyogi theme in the Claude desktop app"></td>
+    <td>
+      <b><code>adiyogi</code></b><br>
+      Shiva as Adiyogi, the first yogi, under a night sky.<br><br>
+      <i>In motion:</i> the stars twinkle.
+    </td>
+  </tr>
+</table>
 
 ## Before you install
 

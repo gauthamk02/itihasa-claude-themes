@@ -185,9 +185,11 @@ A theme is not merged without these:
    page that states the licence, what you changed, and your name.
 2. **The art file's header:** a comment naming the source and licence (the trace helper writes this from
    `credit`).
-3. **`README.md`:** one row in the Themes table. Keep it to one short line.
+3. **`README.md`:** one row in the Themes table: copy an existing `<tr>`, point it at your screenshot, and
+   keep the description and the motion line to one sentence each.
 
-Add a screenshot of the theme in the app to `docs/screenshots/<id>.jpg` (JPEG, under 300 KB).
+Add a screenshot of the theme in the desktop app to `docs/screenshots/<id>.jpg`: the app window only (no
+menu bar or desktop), about 1800 px wide, JPEG under 300 KB.
 
 ## 7. Open a pull request
 
