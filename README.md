@@ -77,6 +77,17 @@ walks you from a source image to a pull request: tracing, the scene, testing, GP
 [Open an issue](https://github.com/gauthamk02/itihasa-claude-themes/issues/new/choose). Include your OS, your Mac's
 chip, the Claude desktop app version, the theme, and whether it was still or in motion. A screenshot helps.
 
+## About Claude Code mods
+
+These themes are built on Claude Code mods, which let a plugin change Claude's own interface, including
+the backdrop behind the conversation.
+
+- [The announcement](https://x.com/ClaudeDevs/status/2121392666244186327) from Claude Devs on X
+- [Mods overview](https://code.claude.com/docs/en/plugins/mods/overview): what a mod is and how to install one
+- [Backdrops](https://code.claude.com/docs/en/plugins/mods/interface#put-a-backdrop-behind-the-conversation):
+  how a mod puts a scene behind the conversation
+- [Mods reference](https://code.claude.com/docs/en/plugins/mods/reference): events, the API and limits
+
 ## Credits and licence
 
 Code is MIT ([LICENSE](LICENSE)). Each theme's source art, its licence and what was changed are listed in
