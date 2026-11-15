@@ -53,7 +53,8 @@ export const register: Register = on => {
     if (unpainted !== undefined) $.ui.toast(`${theme.label}: ${unpainted}`)
 
     const set = await $.theme.set(look(theme, false))
-    if (set.isDrawn) {
+    // A theme with a requestId stands even before the app attaches, and draws when it does.
+    if (set.isDrawn || set.requestId !== undefined) {
       current = theme.id
       moving = false
     } else {
@@ -97,10 +98,12 @@ export const register: Register = on => {
     const motion = parsed.motion ?? (parsed.id === undefined ? moving : false)
 
     const set = await $.theme.set(look(theme, motion))
-    if (!set.isDrawn) return { text: set.reason }
+    const stands = set.isDrawn || set.requestId !== undefined
+    if (!stands) return { text: set.reason }
     current = theme.id
     moving = motion
     await $.store.set(LAST, theme.id)
-    return { text: `${theme.label}, ${motion ? 'moving' : 'still'}.` }
+    const label = `${theme.label}, ${motion ? 'moving' : 'still'}.`
+    return { text: set.isDrawn ? label : `${label} It appears once the app finishes connecting.` }
   })
 }

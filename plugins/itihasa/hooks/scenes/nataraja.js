@@ -2,12 +2,12 @@
 // firelight. The figure is traced from a public-domain photograph (see
 // art/nataraja.js for the source and licence) into three bronze tones.
 //
-// Motion (5 fps, one clock): the flames on the ring flare and fade in orange,
-// the firelight behind the ring breathes, and embers rise from the flame tips.
-// The figure itself never moves.
+// Motion (5 fps, one clock): embers rise from the flame tips. The ring keeps
+// a steady, light orange glow (it used to flare, which read as flashing), and
+// the figure itself never moves.
 
 import { ART } from './art/nataraja.js'
-import { doc, jumps, pin, r1, seeded, stepped } from '../kit.js'
+import { FPS, doc, pin, r1, seeded, stepped } from '../kit.js'
 
 const rand = seeded(1008)
 
@@ -35,17 +35,27 @@ const BRONZE =
   `<use href="#n-base" fill="${C.base}"/><use href="#n-mid" fill="${C.mid}"/><use href="#n-high" fill="${C.high}"/>` +
   `</g>`
 
-// Embers start at the flame tips on the upper half of the ring.
+// Embers: each starts at a flame tip on the upper part of the ring and climbs
+// on its own path (one of three drifts), staggered so some are always in the
+// air. Durations and delays are whole ticks, so they stay on the one clock.
+const EMBERS = 20
+const DRIFTS = ['ember-l', 'ember-r', 'ember-s']
+const LIFE = [3.2, 4, 4.8] // seconds: 16, 20, 24 ticks
+
 function embers() {
   let out = ''
-  for (let i = 0; i < 16; i++) {
-    const a = Math.PI * (0.05 + rand() * 0.9)
-    const r = 250 + rand() * 45
+  for (let i = 0; i < EMBERS; i++) {
+    const a = Math.PI * (0.02 + rand() * 0.96)
+    const r = 255 + rand() * 40
     const x = RING.cx + Math.cos(a) * r
     const y = RING.cy - Math.sin(a) * r
-    out += `<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(2 + rand() * 2.4)}" fill-opacity="${r1(0.55 + rand() * 0.45)}"/>`
+    const life = LIFE[i % LIFE.length]
+    const delay = -Math.round(rand() * life * FPS) / FPS
+    out +=
+      `<circle class="${DRIFTS[i % DRIFTS.length]}" cx="${r1(x)}" cy="${r1(y)}" r="${r1(2.6 + rand() * 2.6)}" ` +
+      `style="${stepped(DRIFTS[i % DRIFTS.length], life)};animation-delay:${r1(delay)}s"/>`
   }
-  return `<g class="embers" fill="${C.ember}">${out}</g>`
+  return `<g fill="${C.ember}">${out}</g>`
 }
 
 function placed(box, motion) {
@@ -84,31 +94,40 @@ const DEFS =
   LAYERS +
   BRONZE
 
-const CSS =
-  `.narrow{display:none}` +
-  `@media (max-aspect-ratio:3/4){.wide{display:none}.narrow{display:inline}}`
 
-// Every keyframe sits on a 0.4 s step (two ticks): flames flare and fade over
-// 2 s, the glow breathes over 1.6 s, embers rise in steps over 6 s.
+// One ember's climb: flares up, drifts, flickers and burns out.
+const climb = (name, dx) =>
+  `@keyframes ${name}{` +
+  `0%{transform:translate(0,0);opacity:0}` +
+  `8%{opacity:1}` +
+  `35%{transform:translate(${r1(dx * 0.45)}px,-80px);opacity:.75}` +
+  `50%{opacity:1}` +
+  `70%{transform:translate(${r1(dx * 0.8)}px,-170px);opacity:.6}` +
+  `100%{transform:translate(${dx}px,-250px);opacity:0}}`
+
+// The flames hold one light opacity and the glow stays as in the still scene:
+// only the embers move, each climbing in 5 fps steps.
 const MOTION_CSS =
-  `.flames{${jumps('flare', 2)}}` +
-  `.glow{${jumps('breathe', 1.6)}}` +
-  `.embers{${stepped('rise', 6)}}` +
-  `@keyframes flare{0%{opacity:.15}20%{opacity:.55}40%{opacity:.3}60%{opacity:.65}80%{opacity:.4}}` +
-  `@keyframes breathe{0%{opacity:.45}25%{opacity:1}50%{opacity:.7}75%{opacity:.95}}` +
-  `@keyframes rise{from{transform:translateY(0);opacity:1}to{transform:translateY(-130px);opacity:0}}`
+  `.flames{opacity:.3}` +
+  climb('ember-l', -40) +
+  climb('ember-r', 40) +
+  climb('ember-s', 8)
 
 function build(motion) {
   return doc({
     motion,
-    css: CSS,
     motionCss: MOTION_CSS,
     defs: DEFS,
     body:
       `<rect width="100%" height="100%" fill="${C.ground}"/>` +
       `<rect width="100%" height="100%" fill="url(#warm)"/>` +
-      placed({ x: '48%', y: '5%', width: '50%', height: '93%', align: 'xMaxYMax', cls: 'wide' }, motion) +
-      placed({ x: '0', y: '34%', width: '100%', height: '64%', align: 'xMidYMax', cls: 'narrow' }, motion),
+      // One copy of the figure, never a wide and a narrow copy swapped by an
+      // aspect-ratio @media with display:none: in the Desktop app's frame that
+      // swap left every animation in the scene frozen. "meet" in a box the
+      // size of the right three-quarters of the window does the same job: a wide window
+      // fits the figure to the height, against the right edge, clear of the
+      // conversation; a tall one fits it to the width, along the bottom.
+      placed({ x: '25%', y: '5%', width: '73%', height: '93%', align: 'xMaxYMax' }, motion),
   })
 }
 
@@ -138,8 +157,9 @@ export const THEME = {
   tint: '#16100c',
   alt: {
     still: 'A Chola bronze of Shiva as Nataraja dancing inside a ring of fire',
-    motion: 'A Chola bronze of Shiva as Nataraja, with firelight flickering behind the ring',
+    motion: 'A Chola bronze of Shiva as Nataraja, with embers rising from the ring of fire',
   },
   STILL: build(false),
   MOTION: build(true),
 }
+

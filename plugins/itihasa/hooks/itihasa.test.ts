@@ -42,7 +42,7 @@ test('arguments name a theme, a mode, both, or off', async () => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type On = (event: string, hook: (...a: any[]) => unknown) => unknown
 
-function engine(on: On, stored: unknown) {
+function engine(on: On, stored: unknown, attached = true) {
   const sets: Array<{ backdrop?: { scene?: string } }> = []
   const store = new Map<string, unknown>(stored === undefined ? [] : [['last', stored]])
   on('command.register', (_: unknown, e: { name: string }) => ({ value: { command: e.name } }))
@@ -53,7 +53,11 @@ function engine(on: On, stored: unknown) {
   })
   on('theme.set', (_: unknown, e: { backdrop?: { scene?: string } }) => {
     sets.push(e)
-    return { value: { isDrawn: true } }
+    return {
+      value: attached
+        ? { isDrawn: true, requestId: 'backdrop' }
+        : { isDrawn: false, requestId: 'backdrop', reason: 'no attached desktop or mobile client draws themes yet' },
+    }
   })
   on('theme.clear', () => ({ value: { isDrawn: false, reason: 'cleared' } }))
   on('ui.toast', () => ({ value: undefined }))
@@ -81,4 +85,13 @@ test('a session starts on the last theme, still, and not at all after off', asyn
   const before = sets.length
   await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
   expect(sets.length).toBe(before)
+})
+
+test('a theme set before the app attaches still counts, and says it will appear', async ($, on) => {
+  const { sets, store } = engine(on as never, undefined, false)
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  const out = (await $.command.run({ command: 'itihasa', args: 'nataraja live' } as never)) as { text: string }
+  expect(sets.at(-1)?.backdrop?.scene).toBe('nataraja-motion')
+  expect(store.get('last')).toBe('nataraja')
+  expect(out.text.startsWith('Nataraja, moving.')).toBe(true)
 })
