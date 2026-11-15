@@ -40,7 +40,7 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await $.command.register({
       name: 'itihasa',
-      description: 'Backdrops from the Hindu epics and Puranas',
+      description: 'Backdrops from Hindu iconography and sacred places',
       argumentHint: `[${THEMES.map(t => t.id).join('|')}|motion|still|off]`,
     })
 

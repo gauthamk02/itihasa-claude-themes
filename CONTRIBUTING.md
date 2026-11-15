@@ -9,7 +9,8 @@ this guide is a suggested route.
 
 ## What fits
 
-- Scenes from the Itihasas (Ramayana, Mahabharata) and the Puranas: deities, episodes, sacred places.
+- Hindu iconography and sacred places: deities and their forms, scenes from the Itihasas and Puranas,
+  temples, ghats and tirthas.
 - Treat the subject with respect. No parody, and nothing a devotee would find degrading.
 - Base the figure on an existing image you are allowed to use (see step 2). We trace ours, because
   hand-written SVG figures have looked poor every time.
@@ -69,11 +70,11 @@ Node.js 20 or later runs the helper scripts.
 Fork the repo on GitHub, then clone your fork and install the plugin from it:
 
 ```bash
-git clone https://github.com/<you>/itihasa-themes.git
+git clone https://github.com/<you>/itihasa-claude-themes.git
 ```
 
 ```bash
-cd itihasa-themes && git checkout -b theme/<id>
+cd itihasa-claude-themes && git checkout -b theme/<id>
 ```
 
 ```bash
@@ -81,7 +82,7 @@ claude plugin marketplace add "$PWD"
 ```
 
 ```bash
-claude plugin install itihasa@itihasa-themes
+claude plugin install itihasa@itihasa-claude-themes
 ```
 
 Claude Code now reads the plugin from your folder. After each edit, run `/reload-plugins` in the app.

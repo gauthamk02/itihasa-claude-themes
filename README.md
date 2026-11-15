@@ -1,7 +1,7 @@
-# itihasa-themes
+# itihasa-claude-themes
 
-Backdrops for the Claude desktop app from the Hindu epics and Puranas. Each theme has a matching color
-palette, a **still** version (the default) and an optional **motion** version.
+Backdrops for the Claude desktop app from Hindu iconography and sacred places. Each theme has a matching
+color palette, a **still** version (the default) and an optional **motion** version.
 
 ![Varanasi backdrop in the Claude desktop app](docs/screenshots/varanasi.jpg)
 
@@ -12,8 +12,6 @@ palette, a **still** version (the default) and an optional **motion** version.
 | `varanasi` | The ghats of Kashi at dusk, in gold line-work after Edward Lear's 1873 watercolour | Diyas flicker on the river |
 | `nataraja` | Shiva as Lord of the Dance in his ring of fire, traced from a Chola bronze | Embers rise from the flames |
 | `adiyogi` | Shiva as Adiyogi, the first yogi, under a night sky | The stars twinkle |
-
-More are planned: Anantashayana, Indra and Vritra, Samudra Manthan, Kurukshetra.
 
 ## Before you install
 
@@ -32,29 +30,29 @@ More are planned: Anantashayana, Indra and Vritra, Samudra Manthan, Kurukshetra.
 From a terminal:
 
 ```bash
-claude plugin marketplace add gauthamk02/itihasa-themes
+claude plugin marketplace add gauthamk02/itihasa-claude-themes
 ```
 
 ```bash
-claude plugin install itihasa@itihasa-themes
+claude plugin install itihasa@itihasa-claude-themes
 ```
 
 Or in the desktop app: click **+** next to the prompt box, then **Plugins** → **Add marketplace**, enter
-`gauthamk02/itihasa-themes`, then **Add plugin**.
+`gauthamk02/itihasa-claude-themes`, then **Add plugin**.
 
 To work on themes, install from a clone instead. Claude Code then reads the plugin from your folder, and
 `/reload-plugins` picks up your edits:
 
 ```bash
-git clone https://github.com/gauthamk02/itihasa-themes.git
+git clone https://github.com/gauthamk02/itihasa-claude-themes.git
 ```
 
 ```bash
-claude plugin marketplace add ./itihasa-themes
+claude plugin marketplace add ./itihasa-claude-themes
 ```
 
 ```bash
-claude plugin install itihasa@itihasa-themes
+claude plugin install itihasa@itihasa-claude-themes
 ```
 
 ## Use
@@ -71,12 +69,12 @@ The last theme you picked comes back, still, each time a session starts.
 
 ## Make your own theme
 
-Themes are traced from public-domain art and drawn as small SVG scenes. [CONTRIBUTING.md](CONTRIBUTING.md)
+Themes are traced from existing art and drawn as small SVG scenes. [CONTRIBUTING.md](CONTRIBUTING.md)
 walks you from a source image to a pull request: tracing, the scene, testing, GPU checks and attribution.
 
 ## Report a problem
 
-[Open an issue](https://github.com/gauthamk02/itihasa-themes/issues/new/choose). Include your OS, your Mac's
+[Open an issue](https://github.com/gauthamk02/itihasa-claude-themes/issues/new/choose). Include your OS, your Mac's
 chip, the Claude desktop app version, the theme, and whether it was still or in motion. A screenshot helps.
 
 ## Credits and licence

@@ -1,12 +1,12 @@
 {
   "name": "itihasa",
   "version": "0.1.0",
-  "description": "Backdrops from the Hindu epics and Puranas, still by default with a motion version of each",
+  "description": "Backdrops from Hindu iconography and sacred places, still by default with a motion version of each",
   "author": {
     "name": "Gautham"
   },
-  "homepage": "https://github.com/gauthamk02/itihasa-themes",
-  "repository": "https://github.com/gauthamk02/itihasa-themes",
+  "homepage": "https://github.com/gauthamk02/itihasa-claude-themes",
+  "repository": "https://github.com/gauthamk02/itihasa-claude-themes",
   "license": "MIT",
-  "keywords": ["theme", "backdrop", "hindu", "itihasa", "purana"]
+  "keywords": ["theme", "backdrop", "hindu", "itihasa", "iconography"]
 }
