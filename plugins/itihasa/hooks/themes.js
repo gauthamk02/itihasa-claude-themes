@@ -22,8 +22,8 @@ export function parseArgs(args) {
 
   const out = { kind: 'show' }
   for (const word of words) {
-    if (word === 'motion' || word === 'animated' || word === 'move') out.motion = true
-    else if (word === 'still' || word === 'static') out.motion = false
+    if (['motion', 'moving', 'move', 'animated', 'animate', 'live'].includes(word)) out.motion = true
+    else if (['still', 'static', 'stop', 'pause'].includes(word)) out.motion = false
     else {
       const theme = byWord(word)
       if (theme === undefined) return { kind: 'unknown', word }

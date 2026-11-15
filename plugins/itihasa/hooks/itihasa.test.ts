@@ -31,6 +31,7 @@ test('arguments name a theme, a mode, both, or off', async () => {
   expect(parseArgs('')).toEqual({ kind: 'list' })
   expect(parseArgs('off')).toEqual({ kind: 'off' })
   expect(parseArgs('motion')).toEqual({ kind: 'show', motion: true })
+  expect(parseArgs('nataraja moving')).toEqual({ kind: 'show', id: 'nataraja', motion: true })
   expect(parseArgs('Shiva still')).toEqual({ kind: 'show', id: 'nataraja', motion: false })
   expect(parseArgs('kaliya')).toEqual({ kind: 'unknown', word: 'kaliya' })
   expect(readScene(sceneName('nataraja', true))?.motion).toBe(true)
