@@ -19,8 +19,10 @@ const C = {
   base: '#0a0d16',
   mid: '#1d2638',
   high: '#40506e',
-  moon: '#efe4c4',
-  tilak: '#f4f1ea',
+  // Moon and tilak are kept muted: bright white behind the chat's white text
+  // made it hard to read.
+  moon: '#8c7f5c',
+  tilak: '#99938a',
   earrings: '#b06a3c',
   star: '#dfe6f5',
 }
@@ -69,7 +71,7 @@ const DEFS =
   `<stop offset="1" stop-color="${C.halo}" stop-opacity="0"/>` +
   `</radialGradient>` +
   `<radialGradient id="moonglow">` +
-  `<stop offset="0" stop-color="${C.moon}" stop-opacity="0.16"/><stop offset="1" stop-color="${C.moon}" stop-opacity="0"/>` +
+  `<stop offset="0" stop-color="${C.moon}" stop-opacity="0.12"/><stop offset="1" stop-color="${C.moon}" stop-opacity="0"/>` +
   `</radialGradient>` +
   // The photograph cuts the left shoulder off square; fade that edge out.
   `<linearGradient id="edgefade" x1="0" y1="0" x2="1" y2="0">` +
@@ -101,7 +103,7 @@ function build(motion) {
       // One copy of the bust, flush with the bottom edge: a wide window fits it
       // to the height against the right edge, a tall one fits it to the width.
       // (No aspect-ratio @media swaps: those froze Nataraja's motion in the app.)
-      placed({ x: '25%', y: '8%', width: '75%', height: '92%', align: 'xMaxYMax' }),
+      placed({ x: '30%', y: '22%', width: '70%', height: '78%', align: 'xMaxYMax' }),
   })
 }
 
