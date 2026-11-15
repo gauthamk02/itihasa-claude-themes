@@ -3,8 +3,9 @@
 
 import { THEME as nataraja } from './scenes/nataraja.js'
 import { THEME as adiyogi } from './scenes/adiyogi.js'
+import { THEME as varanasi } from './scenes/varanasi.js'
 
-export const THEMES = [nataraja, adiyogi]
+export const THEMES = [nataraja, adiyogi, varanasi]
 
 export const DEFAULT_ID = 'nataraja'
 

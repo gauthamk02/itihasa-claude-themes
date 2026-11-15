@@ -1,0 +1,43 @@
+{
+  "id": "varanasi-ghats",
+  "source": "lear-benares-1873.jpg",
+  "credit": "Edward Lear, Benares (14 December 1873), watercolour and ink; public domain, via Google Art Project / Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Edward_Lear_-_Benares_-_Google_Art_Project.jpg",
+  "crop": "3000x1290+100+165",
+  "height": 376,
+  "mask": {
+    "fx": "(r-b)>0.2 || (r+g+b)/3<0.66",
+    "solid": true,
+    "holes": 0.006
+  },
+  "parts": [
+    {
+      "name": "wash",
+      "fx": "(r+g+b)/3<0.8 && (r-b)>0.24",
+      "clip": true,
+      "smooth": 2,
+      "turdsize": 60,
+      "region": "3000x1250+0+0"
+    },
+    {
+      "name": "red",
+      "fx": "r-b>0.22 && (g-b)/(r-b+0.001)<0.44",
+      "clip": true,
+      "smooth": 1,
+      "turdsize": 20,
+      "region": "3000x1250+0+0"
+    },
+    {
+      "name": "ink",
+      "blur": 5,
+      "clip": true,
+      "lines": 14,
+      "turdsize": 14,
+      "region": "3000x1250+0+0"
+    }
+  ],
+  "turdsize": 10,
+  "alphamax": 1.0,
+  "opttolerance": 0.5,
+  "unit": 2,
+  "flip": true
+}

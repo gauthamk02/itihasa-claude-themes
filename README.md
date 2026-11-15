@@ -10,6 +10,7 @@ each has a **still** version (the default) and a **motion** version you can swit
 | Theme | What it shows | Motion version |
 |---|---|---|
 | `nataraja` | Shiva as Nataraja, Lord of the Dance, inside the ring of fire: a Chola bronze in firelight, with a warm dark-bronze palette | Embers rise from the flame tips. The ring keeps a steady orange glow and the figure stays still. |
+| `varanasi` | The ghats of Kashi at dusk, seen from the Ganga: Edward Lear's 1873 watercolour, mirrored and drawn in gold line-work, with the city on the right and the river opening out to the left; a dusk-violet palette | Floating diyas flicker on the river. The ghats stay still. |
 | `adiyogi` | Shiva as Adiyogi, the first yogi: a dark stone bust with eyes closed and the crescent moon in his hair, rising under a night sky, with a deep indigo palette | The stars twinkle, all on one clock. The bust and its glow stay still. |
 
 More are on the way: Anantashayana, Indra and Vritra, Samudra Manthan, and Kurukshetra.
@@ -45,6 +46,7 @@ The theme turns on when a session starts, always **still**. It remembers the las
 | `/itihasa` | List the themes and show which one is on |
 | `/itihasa nataraja` | Show Nataraja, still (`shiva` works too) |
 | `/itihasa adiyogi` | Show Adiyogi, still (`yogi` works too) |
+| `/itihasa varanasi` | Show Varanasi, still (`kashi`, `benares`, `ghats` work too) |
 | `/itihasa motion` | Let the current theme move (`moving` works too) |
 | `/itihasa still` | Hold it still again |
 | `/itihasa nataraja motion` | Pick a theme and its mode in one go |
@@ -103,5 +105,8 @@ node tools/trace-art.mjs sources/nataraja/trace.json
   alloy. The Metropolitan Museum of Art, 1987.80.1, Gift of R. H. Ellsworth Ltd., in honor of Susan Dillon,
   1987. Image released under the Met's Open Access policy (CC0):
   <https://www.metmuseum.org/art/collection/search/39328>
+- **Varanasi** is traced, mirrored, from Edward Lear, *Benares*, 14 December 1873, watercolour and ink. Public
+  domain, via the Google Art Project:
+  <https://commons.wikimedia.org/wiki/File:Edward_Lear_-_Benares_-_Google_Art_Project.jpg>
 - **Adiyogi** is traced from a photograph of an Adiyogi bust supplied by the repo owner
   (`sources/adiyogi/`). It is not a public-domain source: confirm the licence before publishing this theme.

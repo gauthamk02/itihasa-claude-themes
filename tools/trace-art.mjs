@@ -6,18 +6,31 @@
 //   source      the image, relative to the config file
 //   id          art name; writes plugins/itihasa/hooks/scenes/art/<id>.js
 //   crop        optional "WxH+X+Y" in source pixels, applied before anything else
+//   flip        optional true: mirror left-right after the crop (regions below are
+//               then measured on the mirrored image)
 //   height      trace height in px (smaller = fewer characters)
 //   mask        how to cut the subject from its background:
 //               { "channel": "chroma" | "dark", "threshold": percent }
 //               chroma: the subject is coloured and the background grey (bronze on grey)
 //               dark:   the subject is darker than the background (ink on paper)
 //               or { "fx": "<ImageMagick -fx rule, true on the subject>" }
-//               add "solid": true to keep only the largest piece and fill its holes
+//               add "solid": true to keep only the largest piece and fill its holes;
+//               "keep" and "holes" (fractions of the working area, default 0.05
+//               and 0.01) set how small a piece is dropped and a hole is filled;
+//               "close" (default 2) is the radius that joins nearby pieces first
 //   tones       lighter layers inside the subject: [{ "name", "above": percent of gray }]
 //   parts       small layers outside the mask, each found by its own colour rule
 //               inside a region of the cropped source:
 //               [{ "name", "region": "WxH+X+Y", "fx": "<-fx rule>" }]
+//               region is optional (default: the whole image). Instead of fx, a
+//               part can take "lines": percent, which keeps pen lines (pixels
+//               darker than their blurred surroundings by that much; "blur"
+//               sets the radius, default 5). "clip": true keeps a part inside
+//               the mask. "smooth": radius rounds a part off (fewer, larger
+//               shapes) and "turdsize" overrides potrace's speck size for it.
 //   turdsize, opttolerance, alphamax   potrace settings (fewer, smoother curves when larger)
+//   unit        potrace's output grid, steps per pixel (default 10; 2 writes far
+//               fewer digits at half-pixel precision)
 //   credit      one line for the module header (title, museum, licence)
 //
 // Needs ImageMagick (`magick`) and potrace. Work files go to work/<id>/ (git-ignored).
@@ -40,8 +53,8 @@ const big = Math.round(H * 1.4)
 
 // 0. The source, cropped if asked.
 let input = src
-if (cfg.crop) {
-  run('magick', [src, '-crop', cfg.crop, '+repage', 'source.png'])
+if (cfg.crop || cfg.flip) {
+  run('magick', [src, ...(cfg.crop ? ['-crop', cfg.crop, '+repage'] : []), ...(cfg.flip ? ['-flop'] : []), 'source.png'])
   input = 'source.png'
 }
 
@@ -59,17 +72,17 @@ if (cfg.mask.fx) {
 // keeps only the largest piece and fills the holes inside it.
 const solid = cfg.mask.solid
   ? [
-      '-define', `connected-components:area-threshold=${Math.round(big * big * 0.05)}`,
+      '-define', `connected-components:area-threshold=${Math.round(big * big * (cfg.mask.keep ?? 0.05))}`,
       '-define', 'connected-components:mean-color=true', '-connected-components', '8',
       '-negate',
-      '-define', `connected-components:area-threshold=${Math.round(big * big * 0.01)}`,
+      '-define', `connected-components:area-threshold=${Math.round(big * big * (cfg.mask.holes ?? 0.01))}`,
       '-define', 'connected-components:mean-color=true', '-connected-components', '8',
       '-negate',
     ]
   : []
 run('magick', [
   'key.png', '-threshold', `${cfg.mask.fx ? 50 : cfg.mask.threshold}%`,
-  '-morphology', 'Close', 'Disk:2', '-morphology', 'Open', 'Disk:1.5',
+  '-morphology', 'Close', `Disk:${cfg.mask.close ?? 2}`, '-morphology', 'Open', 'Disk:1.5',
   ...solid,
   '-resize', `x${H}`, '-threshold', '50%', 'base.png',
 ])
@@ -86,13 +99,32 @@ for (const tone of cfg.tones ?? []) {
 // canvas the size of the source, then brought to the trace size.
 const full = run('magick', ['identify', '-format', '%w %h', input]).toString().trim().split(' ').map(Number)
 for (const part of cfg.parts ?? []) {
-  const [, w, h, x, y] = /^(\d+)x(\d+)\+(\d+)\+(\d+)$/.exec(part.region).map(Number)
+  const clip = [
+    ...(part.clip ? ['base.png', '-compose', 'Multiply', '-composite'] : []),
+    ...(part.smooth ? ['-morphology', 'Close', `Disk:${part.smooth}`, '-morphology', 'Open', `Disk:${part.smooth}`] : []),
+  ]
+  if (part.lines !== undefined) {
+    run('magick', [
+      'gray.png', '(', 'gray.png', '-blur', `0x${part.blur ?? 5}`, ')', '-compose', 'Minus_Dst', '-composite',
+      '-level', `0,${part.lines}%`, '-threshold', '50%',
+      '-resize', `x${H}`, '-threshold', '50%', ...clip, `${part.name}.png`,
+    ])
+    if (part.region) {
+      const [, w, h, x, y] = /^(\d+)x(\d+)\+(\d+)\+(\d+)$/.exec(part.region).map(Number)
+      const k = H / full[1]
+      const box = [x, y, x + w, y + h].map(v => Math.round(v * k)).join(',')
+      run('magick', [`${part.name}.png`, '(', '+clone', '-fill', 'black', '-colorize', '100',
+        '-fill', 'white', '-draw', `rectangle ${box}`, ')', '-compose', 'Multiply', '-composite', `${part.name}.png`])
+    }
+    continue
+  }
+  const [, w, h, x, y] = /^(\d+)x(\d+)\+(\d+)\+(\d+)$/.exec(part.region ?? `${full[0]}x${full[1]}+0+0`).map(Number)
   run('magick', [
     '-size', `${full[0]}x${full[1]}`, 'xc:black',
     '(', input, '-crop', `${w}x${h}+${x}+${y}`, '+repage', '-fx', part.fx, '-colorspace', 'Gray',
     '-morphology', 'Open', 'Disk:1', ')',
     '-geometry', `+${x}+${y}`, '-composite',
-    '-resize', `x${H}`, '-threshold', '50%', `${part.name}.png`,
+    '-resize', `x${H}`, '-threshold', '50%', ...clip, `${part.name}.png`,
   ])
 }
 
@@ -104,9 +136,10 @@ for (const name of names) {
   run('magick', [`${name}.png`, '-negate', `${name}.pbm`])
   run('potrace', [
     `${name}.pbm`, '-s', '--flat',
-    '--turdsize', String(cfg.turdsize ?? 12),
+    '--turdsize', String((cfg.parts ?? []).find(p => p.name === name)?.turdsize ?? cfg.turdsize ?? 12),
     '--alphamax', String(cfg.alphamax ?? 1.1),
     '--opttolerance', String(cfg.opttolerance ?? 0.5),
+    '--unit', String(cfg.unit ?? 10),
     '-o', `${name}.svg`,
   ])
   const svg = readFileSync(resolve(work, `${name}.svg`), 'utf8')
