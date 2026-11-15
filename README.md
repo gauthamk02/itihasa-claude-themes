@@ -1,112 +1,87 @@
 # itihasa-themes
 
-Backdrops for Claude Code from the Hindu epics and Puranas. Each theme comes with a palette to match, and
-each has a **still** version (the default) and a **motion** version you can switch on.
+Backdrops for the Claude desktop app from the Hindu epics and Puranas. Each theme has a matching color
+palette, a **still** version (the default) and an optional **motion** version.
 
-![Nataraja backdrop](docs/screenshots/nataraja.jpg)
+![Varanasi backdrop in the Claude desktop app](docs/screenshots/varanasi.jpg)
 
 ## Themes
 
-| Theme | What it shows | Motion version |
+| Theme | What it shows | In motion |
 |---|---|---|
-| `nataraja` | Shiva as Nataraja, Lord of the Dance, inside the ring of fire: a Chola bronze in firelight, with a warm dark-bronze palette | Embers rise from the flame tips. The ring keeps a steady orange glow and the figure stays still. |
-| `varanasi` | The ghats of Kashi at dusk, seen from the Ganga: Edward Lear's 1873 watercolour, mirrored and drawn in gold line-work, with the city on the right and the river opening out to the left; a dusk-violet palette | Floating diyas flicker on the river. The ghats stay still. |
-| `adiyogi` | Shiva as Adiyogi, the first yogi: a dark stone bust with eyes closed and the crescent moon in his hair, rising under a night sky, with a deep indigo palette | The stars twinkle, all on one clock. The bust and its glow stay still. |
+| `varanasi` | The ghats of Kashi at dusk, in gold line-work after Edward Lear's 1873 watercolour | Diyas flicker on the river |
+| `nataraja` | Shiva as Lord of the Dance in his ring of fire, traced from a Chola bronze | Embers rise from the flames |
+| `adiyogi` | Shiva as Adiyogi, the first yogi, under a night sky | The stars twinkle |
 
-More are on the way: Anantashayana, Indra and Vritra, Samudra Manthan, and Kurukshetra.
+More are planned: Anantashayana, Indra and Vritra, Samudra Manthan, Kurukshetra.
+
+## Before you install
+
+- **Desktop and mobile apps only.** Backdrops draw in the Claude desktop app (Code tab) and the mobile app.
+  The terminal and editor extensions show the palette at most.
+- **Tested on macOS only**: Apple M4, macOS 26.5, with the desktop app's bundled Claude Code **2.1.325**.
+  Claude Code 2.1.324 is the minimum. Windows and Linux are untested; reports are welcome.
+- **Motion uses your GPU.** A still backdrop is drawn once and costs nothing after that. Motion makes the app
+  redraw the backdrop several times a second for as long as it is on screen, which keeps the GPU busy, warms
+  the Mac and drains the battery faster. In our testing on an M4, an animated backdrop took whole-GPU use from
+  near idle to 30–45%. That's why every theme starts still. Use motion when you're plugged in, and switch back
+  with `/itihasa still`. Motion also stops on its own when macOS **Reduce motion** is on.
 
 ## Install
-
-Backdrops draw only in the **Claude desktop app** (Code tab) and the **mobile app**. The terminal and editors
-show the palette at most. You need Claude Code 2.1.324 or later; the desktop app ships its own copy, so keep the
-app up to date.
 
 From a terminal:
 
 ```bash
-claude plugin marketplace add <owner>/itihasa-themes
+claude plugin marketplace add gauthamk02/itihasa-themes
 ```
 
 ```bash
 claude plugin install itihasa@itihasa-themes
 ```
 
-Or in the desktop app: click **+** next to the prompt box, then **Plugins** → **Add marketplace** with
-`<owner>/itihasa-themes`, then **Add plugin**.
+Or in the desktop app: click **+** next to the prompt box, then **Plugins** → **Add marketplace**, enter
+`gauthamk02/itihasa-themes`, then **Add plugin**.
 
-From a local clone instead: `claude plugin marketplace add /path/to/itihasa-themes`, then the same install
-line.
+To work on themes, install from a clone instead. Claude Code then reads the plugin from your folder, and
+`/reload-plugins` picks up your edits:
+
+```bash
+git clone https://github.com/gauthamk02/itihasa-themes.git
+```
+
+```bash
+claude plugin marketplace add ./itihasa-themes
+```
+
+```bash
+claude plugin install itihasa@itihasa-themes
+```
 
 ## Use
 
-The theme turns on when a session starts, always **still**. It remembers the last theme you picked.
+The last theme you picked comes back, still, each time a session starts.
 
 | Command | What it does |
 |---|---|
-| `/itihasa` | List the themes and show which one is on |
-| `/itihasa nataraja` | Show Nataraja, still (`shiva` works too) |
-| `/itihasa adiyogi` | Show Adiyogi, still (`yogi` works too) |
-| `/itihasa varanasi` | Show Varanasi, still (`kashi`, `benares`, `ghats` work too) |
-| `/itihasa motion` | Let the current theme move (`moving` works too) |
+| `/itihasa` | List the themes |
+| `/itihasa varanasi` | Show a theme, still (names like `kashi` and `shiva` work too) |
+| `/itihasa motion` | Let the current theme move |
 | `/itihasa still` | Hold it still again |
-| `/itihasa nataraja motion` | Pick a theme and its mode in one go |
-| `/itihasa off` | Take the backdrop off. It stays off in new sessions until you pick a theme again |
+| `/itihasa off` | Remove the backdrop until you pick a theme again |
 
-## Performance
+## Make your own theme
 
-A still backdrop is drawn once, as an image, and costs nothing after that. Any motion makes the app redraw
-the whole backdrop, so the motion versions are kept small: only a few embers change, five
-times a second, all on the same tick. The panels over the backdrop use a plain tint, not blur, because blur
-over a moving picture is costly. If your Mac runs warm or you're on battery, stay with the still version.
-Motion also stops on its own when the system's **Reduce motion** setting is on.
+Themes are traced from public-domain art and drawn as small SVG scenes. [CONTRIBUTING.md](CONTRIBUTING.md)
+walks you from a source image to a pull request: tracing, the scene, testing, GPU checks and attribution.
 
-## How the art is made
+## Report a problem
 
-The figures are traced from photographs and prints, not drawn freehand.
-[`tools/trace-art.mjs`](tools/trace-art.mjs) cuts the subject from its background, splits it into a few tone
-layers, and traces each layer with [potrace](https://potrace.sourceforge.net/). Each scene's settings live in
-`sources/<theme>/trace.json`, next to the source image. The scene module (`plugins/itihasa/hooks/scenes/`)
-then colours the layers and adds the background and motion.
-
-Claude Code takes at most 131,072 characters for a scene, so every scene is checked against that limit.
-
-## Development
-
-```bash
-node tools/render-scenes.mjs
-```
-
-renders every theme's still and motion SVG to `tools/preview/` and checks their size.
-
-```bash
-tools/shoot.sh tools/preview/nataraja-still.svg 1400 800 panels
-```
-
-screenshots one with headless Chrome. Add `panels` for stand-in chat panels on top; use `390 844` for a phone.
-
-```bash
-claude plugin validate plugins/itihasa
-```
-
-```bash
-claude plugin test plugins/itihasa
-```
-
-Re-trace art (needs ImageMagick and potrace):
-
-```bash
-node tools/trace-art.mjs sources/nataraja/trace.json
-```
+[Open an issue](https://github.com/gauthamk02/itihasa-themes/issues/new/choose). Include your OS, your Mac's
+chip, the Claude desktop app version, the theme, and whether it was still or in motion. A screenshot helps.
 
 ## Credits and licence
 
-- Code: MIT (see [LICENSE](LICENSE)).
-- **Nataraja** is traced from *Shiva as Lord of Dance (Nataraja)*, Chola period, ca. late 11th century, copper
-  alloy. The Metropolitan Museum of Art, 1987.80.1, Gift of R. H. Ellsworth Ltd., in honor of Susan Dillon,
-  1987. Image released under the Met's Open Access policy (CC0):
-  <https://www.metmuseum.org/art/collection/search/39328>
-- **Varanasi** is traced, mirrored, from Edward Lear, *Benares*, 14 December 1873, watercolour and ink. Public
-  domain, via the Google Art Project:
-  <https://commons.wikimedia.org/wiki/File:Edward_Lear_-_Benares_-_Google_Art_Project.jpg>
-- **Adiyogi** is traced from a photograph of an Adiyogi bust supplied by the repo owner
-  (`sources/adiyogi/`). It is not a public-domain source: confirm the licence before publishing this theme.
+Code is MIT ([LICENSE](LICENSE)). Each theme's source art, its licence and what was changed are listed in
+[CREDITS.md](CREDITS.md).
+
+This is a fan project. It is not made by or affiliated with Anthropic.

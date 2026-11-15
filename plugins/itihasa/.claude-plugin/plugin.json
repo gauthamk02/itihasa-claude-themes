@@ -5,5 +5,8 @@
   "author": {
     "name": "Gautham"
   },
-  "license": "MIT"
+  "homepage": "https://github.com/gauthamk02/itihasa-themes",
+  "repository": "https://github.com/gauthamk02/itihasa-themes",
+  "license": "MIT",
+  "keywords": ["theme", "backdrop", "hindu", "itihasa", "purana"]
 }

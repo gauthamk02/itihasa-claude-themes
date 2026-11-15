@@ -1,0 +1,31 @@
+name: Theme idea
+description: Propose a new theme before you build it, or ask someone else to.
+labels: [theme idea]
+body:
+  - type: input
+    id: subject
+    attributes:
+      label: Subject
+      placeholder: Krishna subduing Kaliya
+    validations:
+      required: true
+  - type: textarea
+    id: scene
+    attributes:
+      label: The scene
+      description: What the backdrop shows, and what small thing moves in the motion version.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source image
+      description: A link to the image and to the page that states its licence (public domain, CC0, CC BY, or your own photo). See CONTRIBUTING.md, step 2.
+    validations:
+      required: true
+  - type: checkboxes
+    id: build
+    attributes:
+      label: Building it
+      options:
+        - label: I plan to build this theme myself

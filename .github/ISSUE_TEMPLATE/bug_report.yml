@@ -1,0 +1,53 @@
+name: Bug report
+description: A theme looks wrong, doesn't move, doesn't load, or uses too much GPU.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw instead. Screenshots help.
+    validations:
+      required: true
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme
+      options: [varanasi, nataraja, adiyogi, all of them, other]
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode
+      options: [still, motion, both]
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      options: [Claude desktop app (Code tab), Claude mobile app, terminal or editor]
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS and chip
+      placeholder: macOS 26.5, Apple M4
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Claude app and Claude Code version
+      description: The desktop app's version (Claude → About Claude), and `claude --version` if you know it.
+      placeholder: Claude 1.x, Claude Code 2.1.325
+    validations:
+      required: true
+  - type: textarea
+    id: gpu
+    attributes:
+      label: GPU numbers (for performance reports)
+      description: Output of `tools/sample-gpu.sh 30 off` and `tools/sample-gpu.sh 30 motion`, or what Activity Monitor shows.
+      render: text
