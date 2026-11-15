@@ -1,0 +1,64 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Scene profiler</title>
+<!--
+  A stand-in for the Desktop app: a scene behind three panels laid out like the
+  Code tab (sidebar, conversation, prompt box). Open through the preview server
+  (.claude/launch.json, "theme-preview") with:
+
+    profile.html?file=snow-pines-scene.svg&glass=tint&as=inline
+    profile.html?file=snow-pines-still-scene.svg&glass=tint&as=img
+    profile.html?file=reference-heavy-v0.svg&glass=blur&as=inline
+    profile.html                                (no scene: the baseline)
+
+  file  = an .svg in this folder
+  glass = blur (frosted panels, like glass.blur > 0) | tint (plain tinted panels, like blur: 0)
+  as    = inline (like an Svg with isInteractive: Desktop draws it as a live document)
+        | img    (like an Svg without isInteractive: Desktop draws it as an image)
+
+  The in-app browser pane blocks iframes (net::ERR_BLOCKED_BY_CLIENT), so
+  "inline" puts the SVG straight into the page instead of in a sandboxed frame.
+-->
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0a0f22; font: 15px -apple-system, sans-serif; color: #eeebfc }
+  #bg { position: fixed; inset: 0; width: 100%; height: 100%; border: 0 }
+  #bg > svg { display: block }
+  .panel { position: fixed; border-radius: 12px; padding: 16px; box-sizing: border-box }
+  #side { left: 0; top: 0; bottom: 0; width: 240px; border-radius: 0 }
+  #main { left: 260px; right: 20px; top: 20px; bottom: 110px }
+  #input { left: 300px; right: 60px; bottom: 24px; height: 64px }
+  body.blur .panel { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: rgba(19, 17, 43, .45) }
+  body.tint .panel { background: rgba(19, 17, 43, .55) }
+  #label { position: fixed; right: 8px; top: 4px; font: 11px ui-monospace, monospace; opacity: .6 }
+</style>
+<body>
+  <div id="side" class="panel">Sessions<br><br>Cook time badges<br>Snow pines</div>
+  <div id="main" class="panel">
+    <p>add a cook time badge to each recipe card</p>
+    <p>Done! Every recipe card now shows a cook time badge under its title.</p>
+  </div>
+  <div id="input" class="panel">Type / for commands</div>
+  <div id="label"></div>
+  <script>
+    const q = new URLSearchParams(location.search)
+    const file = q.get('file')
+    const glass = q.get('glass') || 'tint'
+    const as = q.get('as') || 'inline'
+    document.body.className = glass
+    document.getElementById('label').textContent = file ? `${file} · ${glass} · ${as}` : 'baseline (no scene)'
+    document.title = 'profile ' + (file || 'baseline')
+    if (file && as === 'img') {
+      const img = document.createElement('img')
+      img.id = 'bg'
+      img.src = file
+      document.body.prepend(img)
+    } else if (file) {
+      fetch(file).then(r => r.text()).then(t => {
+        const d = document.createElement('div')
+        d.id = 'bg'
+        d.innerHTML = t
+        document.body.prepend(d)
+      })
+    }
+  </script>
+</body>

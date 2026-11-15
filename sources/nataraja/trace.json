@@ -1,0 +1,14 @@
+{
+  "id": "nataraja",
+  "source": "met-39328-DT240.jpg",
+  "credit": "Shiva as Lord of Dance (Nataraja), Chola, ca. late 11th century. The Metropolitan Museum of Art, 1987.80.1, Open Access (CC0). https://www.metmuseum.org/art/collection/search/39328",
+  "height": 820,
+  "mask": { "channel": "chroma", "threshold": 3 },
+  "tones": [
+    { "name": "mid", "above": 39 },
+    { "name": "high", "above": 66 }
+  ],
+  "turdsize": 20,
+  "alphamax": 1.15,
+  "opttolerance": 0.8
+}

@@ -1,0 +1,12 @@
+{
+  "name": "itihasa-themes",
+  "owner": { "name": "Gautham" },
+  "description": "Claude Code backdrops from the Hindu epics and Puranas",
+  "plugins": [
+    {
+      "name": "itihasa",
+      "source": "./plugins/itihasa",
+      "description": "Backdrops from the Hindu epics and Puranas, still by default with a motion version of each"
+    }
+  ]
+}

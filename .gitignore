@@ -1,0 +1,7 @@
+.DS_Store
+.claude-plugin/types/
+plugins/*/.claude-plugin/types/
+tools/preview/*.svg
+.claude/
+tools/shots/
+work/

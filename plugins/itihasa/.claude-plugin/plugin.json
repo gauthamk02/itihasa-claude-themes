@@ -1,0 +1,9 @@
+{
+  "name": "itihasa",
+  "version": "0.1.0",
+  "description": "Backdrops from the Hindu epics and Puranas, still by default with a motion version of each",
+  "author": {
+    "name": "Gautham"
+  },
+  "license": "MIT"
+}
