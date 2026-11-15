@@ -9,7 +9,7 @@ each has a **still** version (the default) and a **motion** version you can swit
 
 | Theme | What it shows | Motion version |
 |---|---|---|
-| `nataraja` | Shiva as Nataraja, Lord of the Dance, inside the ring of fire: a Chola bronze in firelight, with a warm dark-bronze palette | The firelight behind the ring flickers and a few embers rise. The bronze stays still. |
+| `nataraja` | Shiva as Nataraja, Lord of the Dance, inside the ring of fire: a Chola bronze in firelight, with a warm dark-bronze palette | The flames on the ring flare and fade, the firelight breathes, and embers rise from the flame tips. The figure stays still. |
 
 More are on the way: Anantashayana, Indra and Vritra, Samudra Manthan, and Kurukshetra.
 
@@ -43,7 +43,7 @@ The theme turns on when a session starts, always **still**. It remembers the las
 |---|---|
 | `/itihasa` | List the themes and show which one is on |
 | `/itihasa nataraja` | Show Nataraja, still (`shiva` works too) |
-| `/itihasa motion` | Let the current theme move |
+| `/itihasa motion` | Let the current theme move (`moving` works too) |
 | `/itihasa still` | Hold it still again |
 | `/itihasa nataraja motion` | Pick a theme and its mode in one go |
 | `/itihasa off` | Take the backdrop off. It stays off in new sessions until you pick a theme again |
@@ -51,7 +51,7 @@ The theme turns on when a session starts, always **still**. It remembers the las
 ## Performance
 
 A still backdrop is drawn once, as an image, and costs nothing after that. Any motion makes the app redraw
-the whole backdrop, so the motion versions are kept small: only the firelight and a few embers change, five
+the whole backdrop, so the motion versions are kept small: only the flames, the glow and a few embers change, five
 times a second, all on the same tick. The panels over the backdrop use a plain tint, not blur, because blur
 over a moving picture is costly. If your Mac runs warm or you're on battery, stay with the still version.
 Motion also stops on its own when the system's **Reduce motion** setting is on.
