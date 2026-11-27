@@ -42,7 +42,7 @@ test('arguments name a theme, a mode, both, or off', async () => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type On = (event: string, hook: (...a: any[]) => unknown) => unknown
 
-function engine(on: On, stored: unknown, attached = true) {
+function engine(on: On, stored: unknown, attached = true, themes = true) {
   const sets: Array<{ backdrop?: { scene?: string } }> = []
   const store = new Map<string, unknown>(stored === undefined ? [] : [['last', stored]])
   on('command.register', (_: unknown, e: { name: string }) => ({ value: { command: e.name } }))
@@ -51,14 +51,16 @@ function engine(on: On, stored: unknown, attached = true) {
     store.set(e.key, e.value)
     return { value: undefined }
   })
-  on('theme.set', (_: unknown, e: { backdrop?: { scene?: string } }) => {
-    sets.push(e)
-    return {
-      value: attached
-        ? { isDrawn: true, requestId: 'backdrop' }
-        : { isDrawn: false, requestId: 'backdrop', reason: 'no attached desktop or mobile client draws themes yet' },
-    }
-  })
+  // themes = false stands in for a build whose theme.set throws (Claude Code before 2.1.324).
+  if (themes)
+    on('theme.set', (_: unknown, e: { backdrop?: { scene?: string } }) => {
+      sets.push(e)
+      return {
+        value: attached
+          ? { isDrawn: true, requestId: 'backdrop' }
+          : { isDrawn: false, requestId: 'backdrop', reason: 'no attached desktop or mobile client draws themes yet' },
+      }
+    })
   on('theme.clear', () => ({ value: { isDrawn: false, reason: 'cleared' } }))
   on('ui.toast', () => ({ value: undefined }))
   on('ui.status', () => ({ value: undefined }))
@@ -94,4 +96,12 @@ test('a theme set before the app attaches still counts, and says it will appear'
   expect(sets.at(-1)?.backdrop?.scene).toBe('nataraja-motion')
   expect(store.get('last')).toBe('nataraja')
   expect(out.text.startsWith('Nataraja, moving.')).toBe(true)
+})
+
+test('a theme.set that throws answers the command with the reason, and keeps the last theme', async ($, on) => {
+  const { store } = engine(on as never, 'adiyogi', true, false)
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  const out = (await $.command.run({ command: 'itihasa', args: 'nataraja' } as never)) as { text: string }
+  expect(out.text.includes('theme.set')).toBe(true)
+  expect(store.get('last')).toBe('adiyogi')
 })

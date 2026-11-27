@@ -19,6 +19,22 @@ function look(theme: Theme, motion: boolean): ThemeSetArgs {
   }
 }
 
+// Claude Code before 2.1.324 throws on attributes it does not know (overrideColorScheme). The desktop app
+// can bundle an older build than the terminal's, so say that plainly instead of failing the hook.
+const TOO_OLD = 'itihasa needs Claude Code 2.1.324 or later. The desktop app can run an older build than your terminal: update the app, then start a new session.'
+
+type ThemeApi = { theme: { set(args: ThemeSetArgs): Promise<{ isDrawn: boolean; requestId?: string; reason?: string }> } }
+
+async function setLook($: ThemeApi, theme: Theme, motion: boolean): Promise<{ stands: boolean; isDrawn: boolean; reason: string }> {
+  try {
+    const set = await $.theme.set(look(theme, motion))
+    return { stands: set.isDrawn || set.requestId !== undefined, isDrawn: set.isDrawn, reason: set.reason ?? '' }
+  } catch (err) {
+    const why = err instanceof Error ? err.message : String(err)
+    return { stands: false, isDrawn: false, reason: /does not know the attribute/.test(why) ? `${TOO_OLD}\n(${why})` : why }
+  }
+}
+
 function list(current: string | undefined): string {
   const rows = THEMES.map(t => `${t.id === current ? '▸' : ' '} ${t.id.padEnd(12)} ${t.label}: ${t.story}`)
   return [
@@ -52,9 +68,9 @@ export const register: Register = on => {
     const unpainted = COLORS.get(theme.id)!.problems.find(line => line.startsWith("Desktop won't paint"))
     if (unpainted !== undefined) $.ui.toast(`${theme.label}: ${unpainted}`)
 
-    const set = await $.theme.set(look(theme, false))
+    const set = await setLook($, theme, false)
     // A theme with a requestId stands even before the app attaches, and draws when it does.
-    if (set.isDrawn || set.requestId !== undefined) {
+    if (set.stands) {
       current = theme.id
       moving = false
     } else {
@@ -97,9 +113,8 @@ export const register: Register = on => {
     const theme = findTheme(id) ?? findTheme(DEFAULT_ID)!
     const motion = parsed.motion ?? (parsed.id === undefined ? moving : false)
 
-    const set = await $.theme.set(look(theme, motion))
-    const stands = set.isDrawn || set.requestId !== undefined
-    if (!stands) return { text: set.reason }
+    const set = await setLook($, theme, motion)
+    if (!set.stands) return { text: set.reason }
     current = theme.id
     moving = motion
     await $.store.set(LAST, theme.id)
